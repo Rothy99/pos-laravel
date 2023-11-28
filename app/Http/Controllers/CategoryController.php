@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -9,79 +10,84 @@ class CategoryController extends Controller
 {
     public function List_Category()
     {
-
-        $category = [
-
-            (object) [
-                'id' => 1,
-                'cat_id' => 'S001',
-                'cat_name' => 'Soft drink',
-                'desc' => 'testing',
-            ],
-            (object) [
-                'id' => 2,
-                'cat_id' => 'S002',
-                'cat_name' => 'Coffee',
-                'desc' => 'testing',
-            ],
-            (object) [
-                'id' => 3,
-                'cat_id' => 'S003',
-                'cat_name' => 'Food',
-                'desc' => 'testing',
-            ],
-            (object) [
-                'id' => 4,
-                'cat_id' => 'S003',
-                'cat_name' => 'Food',
-                'desc' => 'testing',
-            ],
-            (object) [
-                'id' => 5,
-                'cat_id' => 'S003',
-                'cat_name' => 'Food',
-                'desc' => 'testing',
-            ],
-        ];
-
-        $data = [
-            'data' => $category,
-        ];
-        return response()->json($data);
+        $cat_model = new Category;
+        $category = $cat_model::all();
+        return response()->json(
+            [
+                'status' => 'Success',
+                'data' => $category,
+            ], 200);
     }
     public function Create(Request $request)
     {
-        // Mocked response
-        $cat = [
-            'id' => 3,
+        // Validate the incoming request data
+        $validator = validator($request->all(), [
+            'cat_id' => 'required',
+            'cat_name' => 'required',
+            'desc' => 'required',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // Extract data from the request
+        $data = [
             'cat_id' => $request->input('cat_id'),
             'cat_name' => $request->input('cat_name'),
             'desc' => $request->input('desc'),
         ];
 
-        return response()->json(['data' => $cat, 'message' => 'Category created successfully']);
+        // Create a new category in the database
+        $category = Category::create($data);
+
+        // Return a success response
+        return response()->json(['data' => $data, 'message' => 'Category created successfully']);
     }
     public function Update(Request $request, $id)
     {
-        // Mocked response
-        $cat = [
-            'id' => $id,
-            'cat_id' => $request->input('cat_id'),
-            'cat_name' => $request->input('cat_name'),
-            'desc' => $request->input('desc'),
-        ];
+        // Validate the incoming request data
+        $validator = validator($request->all(), [
+            'cat_id' => 'required',
+            'cat_name' => 'required',
+            'desc' => 'required',
+        ]);
 
-        // Simulate an update by modifying the 'cat_name' in the response
-        // $updatedCatName = 'Updated to ' . $request->input('cat_name');
-        // $cat['cat_name'] = $updatedCatName;
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
-        return Response::json(['data' => $cat, 'message' => 'Category updated successfully']);
+        // Find the category to update
+        $category = Category::find($id);
+
+        // Update fields
+        $category->cat_id = $request->input('cat_id');
+        $category->cat_name = $request->input('cat_name');
+        $category->desc = $request->input('desc');
+
+        // Save changes to the database
+        $category->save();
+
+        // Return a success response
+        return response()->json(['data' => $category, 'message' => 'Category updated successfully']);
     }
     public function Delete($id)
     {
-        // Simulate a delete by ID you know?
-        $message = 'Category with ID ' . $id . ' deleted successfully';
+        // Find the category to delete
+        $category = Category::find($id);
 
-        return Response::json(['message' => $message]);
+        // Check if the category exists
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+
+        // Delete the category
+        $category->delete();
+
+        // Return a success response
+        $message = 'Category with ID ' . $id . ' deleted successfully';
+        return response()->json(['message' => $message]);
     }
 }
