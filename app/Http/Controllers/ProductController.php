@@ -18,10 +18,8 @@ public function List_product(){
                 'data' => $Product
             ], 200);
     }
-    
-    public function Create(Request $request)
+ public function Create(Request $request)
     {
-        // Validate the incoming request data
         $validator = validator($request->all(), [
             'pro_name' => 'required',
             'pro_code' => 'required',
@@ -31,24 +29,16 @@ public function List_product(){
             'unit_id' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
-        // Check if validation fails
         if ($validator->fails()) {
             return response()->json(['status' => 'Validation Error', 'errors' => $validator->errors()], 422);
         }
-    
-        // Access validated data
         $input = $request->all();
-    
-        // Handle file upload
         if ($image = $request->file('image')) {
             $destinationPath = 'asset/product/';
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
         }
-    
-        // Mocked user response
         $data = [
             'pro_name' => $input['pro_name'],
             'pro_code' => $input['pro_code'],
@@ -60,8 +50,6 @@ public function List_product(){
             'image' => $input['image'],
         ];
     
-        // Simulate database insertion success
-        // You can replace this with your actual database insertion logic
         $product = ProductModel::create($data);
     
         if ($product) {
@@ -81,18 +69,13 @@ public function List_product(){
     }
     public function Update(Request $request, $id)
     {
-        
         $input = $request->all();
-
-        // Handle file upload if an image is provided
         if ($request->hasFile('image')) {
             $destinationPath = 'asset/product/';
             $profileImage = date('YmdHis') . "." . $request->file('image')->getClientOriginalExtension();
             $request->file('image')->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
         }
-    
-        // Mocked user response
         $data = [
             'pro_name' => $input['pro_name'],
             'pro_code' => $input['pro_code'],
@@ -103,11 +86,9 @@ public function List_product(){
             'unit_id' => $input['unit_id'],
             'image' => $input['image'] ?? null,
         ];
-    
-        // Simulate database update success
-        // You can replace this with your actual database update logic
-        $isUpdated = true;
-    
+        
+        $isUpdated = ProductModel::find($id);
+        $isUpdated->update($request->all());
         if ($isUpdated) {
             return response()->json(
                 [
@@ -130,10 +111,8 @@ public function List_product(){
 
 public function Delete($id)
     {
-        // Simulate database deletion
-        // Replace this with your actual database deletion logic
-        $isDeleted = true;
-
+        $isDeleted = ProductModel::find($id);
+        $isDeleted->delete();
         if ($isDeleted) {
             return response()->json(['message' => 'Product deleted successfully']);
         } else {
