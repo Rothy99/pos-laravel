@@ -21,9 +21,9 @@ class ProductModel extends Model
             'category_id',
             'cur_stock',
             'price',
-            'alert',    
-            'unit_id', 
-            'image',   
+            'alert',
+            'unit_id',
+            'image',
     ];
-    
+
 }

@@ -1,24 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\ProductModel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 class ProductController extends Controller
 {
-public function List_product(){
-    $pro_model = new ProductModel;
-    $Product = $pro_model::all();
-    return response()->json(
+    public function List_product()
+    {
+        $pro_model = new ProductModel;
+        $Product = $pro_model::all();
+        return response()->json(
             [
                 'status' => 'Success',
-                'data' => $Product
+                'data' => $Product,
             ], 200);
     }
- public function Create(Request $request)
+public function Create(Request $request)
     {
         $validator = validator($request->all(), [
             'pro_name' => 'required',
@@ -33,6 +33,7 @@ public function List_product(){
             return response()->json(['status' => 'Validation Error', 'errors' => $validator->errors()], 422);
         }
         $input = $request->all();
+        // Handle file upload
         if ($image = $request->file('image')) {
             $destinationPath = 'asset/product/';
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
@@ -46,28 +47,26 @@ public function List_product(){
             'cur_stock' => 0,
             'price' => $input['price'],
             'alert' => $input['alert'],
-            'unit_id'  => $input['unit_id'],
+            'unit_id' => $input['unit_id'],
             'image' => $input['image'],
         ];
-    
         $product = ProductModel::create($data);
-    
         if ($product) {
             return response()->json(
                 [
                     'status' => 'Success',
                     'message' => 'Product created successfully',
-                    'data' => $data
+                    'data' => $data,
                 ], 201);
         } else {
             return response()->json(
                 [
                     'status' => 'Error',
-                    'message' => 'Failed to create product'
+                    'message' => 'Failed to create product',
                 ], 500);
         }
     }
-    public function Update(Request $request, $id)
+ public function Update(Request $request, $id)
     {
         $input = $request->all();
         if ($request->hasFile('image')) {
@@ -86,7 +85,6 @@ public function List_product(){
             'unit_id' => $input['unit_id'],
             'image' => $input['image'] ?? null,
         ];
-        
         $isUpdated = ProductModel::find($id);
         $isUpdated->update($request->all());
         if ($isUpdated) {
@@ -94,7 +92,7 @@ public function List_product(){
                 [
                     'status' => 'Success',
                     'message' => 'Product updated successfully',
-                    'data' => $data
+                    'data' => $data,
                 ],
                 200
             );
@@ -102,13 +100,12 @@ public function List_product(){
             return response()->json(
                 [
                     'status' => 'Error',
-                    'message' => 'Failed to update product'
+                    'message' => 'Failed to update product',
                 ],
                 500
             );
         }
     }
-
 public function Delete($id)
     {
         $isDeleted = ProductModel::find($id);
