@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,8 @@ Route::post('/Product/Create', [ProductController::class, 'Create']);
 Route::get('/Product/List', [ProductController::class, 'List_product']);
 Route::post('/Product/Edit/{id}', [ProductController::class, 'Update']);
 Route::delete('Product/delete/{id}', [ProductController::class, 'Delete']);
+
+Route::post('/Cart/{id}', [CartController::class, 'addToCart']);
+Route::get('/Cart', [CartController::class, 'showCart']);
+Route::delete('/cart/clear', [CartController::class, 'clearCart']);
+Route::patch('update/cart/{id}', [CartController::class, 'updateQuantity']);
