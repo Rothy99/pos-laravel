@@ -69,44 +69,91 @@ class CartController extends Controller
     
     //     return response()->json($response);
     // }
-    public function addToCart($id)
+    // public function addToCart($id)
+    // {
+    //     // Fetch product details from the database
+    //     $product = ProductModel::find($id);
+    
+    //     if (!$product) {
+    //         return response()->json(['message' => 'Product not found'], 404);
+    //     }
+    
+    //     $cart = request()->session()->get('cart', []);
+    
+    //     // Validate the quantity
+    //     // $validatedData = request()->validate([
+    //     //     'quantity' => 'required|integer|min:1',
+    //     // ]);
+    
+    //     // Add the product to the cart as a new entry
+    //     $cartItem = [
+    //         'pro_id' => $product->id,
+    //         'pro_name' => $product->pro_name,
+    //         'price' => $product->price,
+    //         'quantity' => 1,
+    //         'total_price' => number_format(1 * $product->price, 2),
+    //     ];
+    
+    //     $cart[] = $cartItem;
+    
+    //     request()->session()->put('cart', $cart);
+    
+    //     // Include information about the added product in the response
+    //     $response = [
+    //         'message' => 'Item added to cart',
+    //         'added_product' => $cartItem,
+    //     ];
+    
+    //     return response()->json($response);
+    // }
+    public function addToCart(Request $request, $productId)
     {
-        // Fetch product details from the database
-        $product = ProductModel::find($id);
-    
-        if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+        // Validate the request
+        $request->validate([
+            'specification_id' => 'sometimes|exists:product_specifications,id',
+            'quantity' => 'integer|min:1',
+        ]);
+
+        // Retrieve product details
+        $product = Product::findOrFail($productId);
+
+        // Check if the product has associated specifications
+        if ($request->has('specification_id')) {
+            // Retrieve the selected specification
+            $specification = ProductSpecification::findOrFail($request->input('specification_id'));
+
+            // Calculate the adjusted price based on the specification
+            $adjustedPrice = $product->price * ($specification->price_modifier ?? 1);
+
+            // Add the product to the cart with specifications
+            $cartItem = [
+                'product_id' => $product->id,
+                'quantity' => $request->input('quantity', 1),
+                'price' => $adjustedPrice,
+                'specification_name' => $specification->specification_name,
+                'specification_value' => $specification->specification_value,
+            ];
+        } else {
+            // Add the product to the cart without specifications
+            $cartItem = [
+                'product_id' => $product->id,
+                'quantity' => $request->input('quantity', 1),
+                'price' => $product->price,
+            ];
         }
-    
-        $cart = request()->session()->get('cart', []);
-    
-        // Validate the quantity
-        // $validatedData = request()->validate([
-        //     'quantity' => 'required|integer|min:1',
-        // ]);
-    
-        // Add the product to the cart as a new entry
-        $cartItem = [
-            'pro_id' => $product->id,
-            'pro_name' => $product->pro_name,
-            'price' => $product->price,
-            'quantity' => 1,
-            'total_price' => number_format(1 * $product->price, 2),
-        ];
-    
+
+        // Retrieve the existing cart items from the session
+        $cart = Session::get('cart', []);
+
+        // Add the new item to the cart
         $cart[] = $cartItem;
-    
-        request()->session()->put('cart', $cart);
-    
-        // Include information about the added product in the response
-        $response = [
-            'message' => 'Item added to cart',
-            'added_product' => $cartItem,
-        ];
-    
-        return response()->json($response);
+
+        // Update the cart in the session
+        Session::put('cart', $cart);
+
+        return response()->json(['message' => 'Product added to cart successfully']);
     }
-    
+
     
 public function showAddedProducts(Request $request)
     {
