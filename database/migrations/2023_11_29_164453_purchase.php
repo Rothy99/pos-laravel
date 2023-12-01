@@ -22,7 +22,7 @@ class Purchase extends Migration
             $table->string('unit_id');
             $table->float('amount');
             $table->integer('qty');
-            $table->float('total_amt');
+            $table->float('total_amt',10,2);
             $table->string('status');
             $table->string('remark');
             $table->timestamps();
