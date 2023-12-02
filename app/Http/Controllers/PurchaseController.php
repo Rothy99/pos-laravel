@@ -70,7 +70,6 @@ class PurchaseController extends Controller
 
     public function Update(Request $request, $id)
     {
-
         // validation the incoming request data
         $validator = validator($request->all(), [
             'pur_id' => 'required',

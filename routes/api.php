@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SpecificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CartController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -18,17 +18,21 @@ use App\Http\Controllers\CartController;
 | contains the "web" middleware group. Now create something great!
 |
  */
-// insert delete and Update
+// Route crud for Category
 Route::get('/List-Category', [CategoryController::class, 'List_Category']);
 Route::post('/Category/Create', [CategoryController::class, 'Create']);
 Route::delete('/Category/Delete/{id}', [CategoryController::class, 'Delete']);
 Route::post('/Category/Update/{id}', [CategoryController::class, 'Update']);
 
-// Route for Purchase
+// Route crud for Purchase
 Route::get('/List-Purchase', [PurchaseController::class, 'List_Purchase']);
 Route::post('/Purchase/Add', [PurchaseController::class, 'Create']);
 Route::delete('/Purchase/Delete/{id}', [PurchaseController::class, 'Delete']);
 Route::post('/Purchase/Update/{id}', [PurchaseController::class, 'Update']);
+
+// Route crud for Specification
+Route::get('/List_Specification', [SpecificationController::class, 'List_Specification']);
+Route::post('/Specification/Create', [SpecificationController::class, 'Create']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
