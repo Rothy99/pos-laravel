@@ -19,6 +19,18 @@ class SpecificationController extends Controller
     }
     public function Create(Request $request)
     {
+        // ! Validation Required
+        $validator = validator($request->all(), [
+            'specification_id' => 'required',
+            'pro_id' => 'required',
+            'specification_name' => 'required',
+            'specification_value' => 'required',
+            'price' => 'required',
+        ]);
+        // ? Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
 
         $data = [
             'specification_id' => $request->input('specification_id'),
@@ -30,4 +42,52 @@ class SpecificationController extends Controller
         $specification = Specification::Create($data);
         return response()->json(['data' => $data, 'message' => 'Specifications created successfully']);
     }
+
+    public function Delete($id)
+    {
+        // * Find data to delete
+        $specification = Specification::find($id);
+
+        // ! Delete data
+        $specification->delete();
+
+        //* Return message
+        $message = 'Specification with ID' . $id . 'deleted successfully';
+        return response()->json(['message' => $message]);
+    }
+
+    public function Update(Request $request, $id)
+    {
+
+        // ! Validation Required
+        $validator = validator($request->all(), [
+            'specification_id' => 'required',
+            'pro_id' => 'required',
+            'specification_name' => 'required',
+            'specification_value' => 'required',
+            'price' => 'required',
+        ]);
+        // ? Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // * find data to update
+        $specification = Specification::find($id);
+
+        // * Update fields to Database
+        $specification->specification_id = $request->input('specification_id');
+        $specification->pro_id = $request->input('pro_id');
+        $specification->specification_name = $request->input('specification_name');
+        $specification->specification_value = $request->input('specification_value');
+        $specification->price = $request->input('price');
+
+        //? save any change to database
+        $specification->save();
+
+        // * Return message
+        return response()->json(['data' => $specification, 'message' => 'specification has been updated successfully']);
+
+    }
+
 }

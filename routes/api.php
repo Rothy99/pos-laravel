@@ -33,6 +33,8 @@ Route::post('/Purchase/Update/{id}', [PurchaseController::class, 'Update']);
 // Route crud for Specification
 Route::get('/List_Specification', [SpecificationController::class, 'List_Specification']);
 Route::post('/Specification/Create', [SpecificationController::class, 'Create']);
+Route::delete('Specification/Delete/{id}', [SpecificationController::class, 'Delete']);
+Route::post('Specification/Update/{id}', [SpecificationController::class, 'Update']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
