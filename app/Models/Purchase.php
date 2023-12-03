@@ -22,4 +22,3 @@ class Purchase extends Model
         'remark',
     ];
 }
-    
