@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Purchase;
+use App\Models\PurchaseModel;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
     public function List_Purchase()
     {
-        $pur_model = new Purchase;
+        $pur_model = new PurchaseModel();
         $purchase = $pur_model::all();
         return response()->json(
             [
@@ -26,7 +26,7 @@ class PurchaseController extends Controller
             'pur_name' => 'required',
             'pro_id' => 'required',
             'category_id' => 'required',
-            'unit_id' => 'required',
+            'esp_id' => 'required',
             'amount' => 'required',
             'qty' => 'required',
             'total_amt' => 'required',
@@ -44,21 +44,21 @@ class PurchaseController extends Controller
             'pur_name' => $request->input('pur_name'),
             'pro_id' => $request->input('pro_id'),
             'category_id' => $request->input('category_id'),
-            'unit_id' => $request->input('unit_id'),
+            'esp_id' => $request->input('esp_id'),
             'amount' => $request->input('amount'),
             'qty' => $request->input('qty'),
             'total_amt' => $request->input('total_amt'),
             'status' => $request->input('status'),
             'remark' => $request->input('remark'),
         ];
-        $purchase = Purchase::Create($data);
+        $purchase = PurchaseModel::Create($data);
         return response()->json(['data' => $data, 'message' => 'Purchase create successfully']);
     }
     public function Delete($id)
     {
 
         //* find purchase to delete
-        $purchase = Purchase::find($id);
+        $purchase = PurchaseModel::find($id);
 
         //! Delete the category
         $purchase->delete();
@@ -76,7 +76,7 @@ class PurchaseController extends Controller
             'pur_name' => 'required',
             'pro_id' => 'required',
             'category_id' => 'required',
-            'unit_id' => 'required',
+            'esp_id' => 'required',
             'amount' => 'required',
             'qty' => 'required',
             'total_amt' => 'required',
@@ -90,14 +90,14 @@ class PurchaseController extends Controller
         }
 
         //? find Purchase to update
-        $purchase = Purchase::find($id);
+        $purchase = PurchaseModel::find($id);
 
         //* Update fields to the Database
         $purchase->pur_id = $request->input('pur_id');
         $purchase->pur_name = $request->input('pur_name');
         $purchase->pro_id = $request->input('pro_id');
         $purchase->category_id = $request->input('category_id');
-        $purchase->unit_id = $request->input('unit_id');
+        $purchase->esp_id = $request->input('esp_id');
         $purchase->amount = $request->input('amount');
         $purchase->qty = $request->input('qty');
         $purchase->total_amt = $request->input('total_amt');

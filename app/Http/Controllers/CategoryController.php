@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\CategoryModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function List_Category()
     {
-        $cat_model = new Category;
+        $cat_model = new CategoryModel;
         $category = $cat_model::all();
         return response()->json(
             [
@@ -24,7 +24,7 @@ class CategoryController extends Controller
         $validator = validator($request->all(), [
             'cat_id' => 'required',
             'cat_name' => 'required',
-            'desc' => 'required',
+            'description' => 'required',
         ]);
 
         // Check if validation fails
@@ -36,11 +36,11 @@ class CategoryController extends Controller
         $data = [
             'cat_id' => $request->input('cat_id'),
             'cat_name' => $request->input('cat_name'),
-            'desc' => $request->input('desc'),
+            'description' => $request->input('description'),
         ];
 
         // Create a new category in the database
-        $category = Category::create($data);
+        $category = CategoryModel::create($data);
 
         // Return a success response
         return response()->json(['data' => $data, 'message' => 'Category created successfully']);
@@ -51,7 +51,7 @@ class CategoryController extends Controller
         $validator = validator($request->all(), [
             'cat_id' => 'required',
             'cat_name' => 'required',
-            'desc' => 'required',
+            'description' => 'required',
         ]);
 
         // Check if validation fails
@@ -60,12 +60,12 @@ class CategoryController extends Controller
         }
 
         // Find the category to update
-        $category = Category::find($id);
+        $category = CategoryModel::find($id);
 
         // Update fields
         $category->cat_id = $request->input('cat_id');
         $category->cat_name = $request->input('cat_name');
-        $category->desc = $request->input('desc');
+        $category->description = $request->input('description');
 
         // Save changes to the database
         $category->save();
@@ -76,7 +76,7 @@ class CategoryController extends Controller
     public function Delete($id)
     {
         // Find the category to delete
-        $category = Category::find($id);
+        $category = CategoryModel::find($id);
 
         // Check if the category exists
         if (!$category) {

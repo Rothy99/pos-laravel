@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Specification;
+use App\Models\SpecificationModel;
 use Illuminate\Http\Request;
 
 class SpecificationController extends Controller
 {
     public function List_Specification()
     {
-        $spc_model = new Specification;
+        $spc_model = new SpecificationModel();
         $specification = $spc_model::all();
         return response()->json([
             'status' => 'Success',
@@ -39,14 +39,14 @@ class SpecificationController extends Controller
             'specification_value' => $request->input('specification_value'),
             'price' => $request->input('price'),
         ];
-        $specification = Specification::Create($data);
+        $specification = SpecificationModel::Create($data);
         return response()->json(['data' => $data, 'message' => 'Specifications created successfully']);
     }
 
     public function Delete($id)
     {
         // * Find data to delete
-        $specification = Specification::find($id);
+        $specification = SpecificationModel::find($id);
 
         // ! Delete data
         $specification->delete();
@@ -73,7 +73,7 @@ class SpecificationController extends Controller
         }
 
         // * find data to update
-        $specification = Specification::find($id);
+        $specification = SpecificationModel::find($id);
 
         // * Update fields to Database
         $specification->specification_id = $request->input('specification_id');

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Purchase extends Model
+class PurchaseModel extends Model
 {
     protected $table = 'purchase';
 
@@ -14,7 +14,7 @@ class Purchase extends Model
         'pur_name',
         'pro_id',
         'category_id',
-        'unit_id',
+        'esp_id',
         'amount',
         'qty',
         'total_amt',
